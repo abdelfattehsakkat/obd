@@ -11,13 +11,13 @@ Outil de diagnostic automobile **strictement en lecture seule**, connecté à un
 ## Démarrage rapide
 
 ```bash
-npm install
-npm run dev
+npm ci       # première installation des dépendances
+./dev.sh
 ```
 
-Ouvrir <http://127.0.0.1:5173>, laisser l'interface sur **« Banc virtuel (démo) »** et cliquer sur
-**Connecter**. Un véhicule simulé répond au protocole ELM327 réel : vous pouvez explorer toutes les
-fonctionnalités sans matériel.
+Ouvrir l'adresse affichée dans le terminal (par défaut <http://127.0.0.1:5173>). Le script démarre
+uniquement l'interface locale, sans passerelle ni connexion au véhicule. Laisser **« Banc virtuel
+(démo) »** sélectionné et cliquer sur **Connecter** pour explorer l'application sans matériel.
 
 ## Fonctionnalités
 
@@ -25,11 +25,16 @@ fonctionnalités sans matériel.
 | --- | --- |
 | **Tableau de bord** | 4 jauges principales (régime, vitesse, température, charge), courbes temps réel, paramètres secondaires, identification véhicule |
 | **Données temps réel** | Tous les PID du mode 01 supportés par le calculateur, avec valeur, unité, tendance et activation individuelle de l'acquisition |
-| **Codes défauts** | Lecture des codes confirmés (mode 03), en attente (mode 07) et permanents (mode 0A), avec description en français et statut du témoin moteur |
-| **Véhicule & adaptateur** | VIN, identifiant de calibration, nom du calculateur, protocole, firmware de l'adaptateur, liste des capteurs déclarés |
+| **Codes défauts** | Codes confirmés (mode 03), en attente (mode 07) et permanents (mode 0A), témoin moteur et état de préparation des moniteurs antipollution (PID `01:01`) |
+| **Véhicule & adaptateur** | Profil d'affichage manuel, VIN, identifiant de calibration, nom du calculateur, protocole, firmware de l'adaptateur, liste des capteurs déclarés |
 | **Console** | Terminal des échanges ELM327 avec envoi de commandes expertes — chaque saisie est validée en direct par le garde-fou |
 
 ## Connexion à un vrai véhicule
+
+Dans **Véhicule & adaptateur**, le profil **Générique** est sélectionné par défaut et accepte un nom
+de modèle facultatif. Les profils **Chevrolet Sonic T300 1.2** et **Chevrolet Aveo T250 1.2** ne
+changent pas les commandes envoyées ni la détection des capteurs. Le choix reste en mémoire jusqu'au
+rechargement de la page ; les identifiants lus ne sélectionnent jamais de profil automatiquement.
 
 Trois interfaces sont disponibles dans le menu déroulant en haut à droite.
 

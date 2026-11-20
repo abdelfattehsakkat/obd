@@ -1,15 +1,52 @@
 import { PID_BY_KEY } from '../obd/pids';
 import type { ObdController } from '../core/useObd';
 
-export function VehicleView({ controller }: { controller: ObdController }) {
+export const VEHICLE_PROFILES = {
+  generic: 'Générique',
+  sonic: 'Chevrolet Sonic T300 1.2',
+  aveo: 'Chevrolet Aveo T250 1.2',
+} as const;
+
+export type VehicleProfile = keyof typeof VEHICLE_PROFILES;
+
+interface VehicleViewProps {
+  controller: ObdController;
+  profile: VehicleProfile;
+  onProfileChange: (profile: VehicleProfile) => void;
+  modelName: string;
+  onModelNameChange: (modelName: string) => void;
+}
+
+export function VehicleView({ controller, profile, onProfileChange, modelName, onModelNameChange }: VehicleViewProps) {
   const { vehicleInfo, supportedPids, transportInfo } = controller;
 
   return (
     <div className="stack">
+      <div className="card">
+        <div className="card-header">
+          <span className="card-title">Véhicule déclaré</span>
+        </div>
+        <div className="card-body grid-2" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))' }}>
+          <label className="stack">
+            Profil d’affichage
+            <select value={profile} onChange={(event) => onProfileChange(event.target.value as VehicleProfile)}>
+              {Object.entries(VEHICLE_PROFILES).map(([id, label]) => (
+                <option key={id} value={id}>{label}</option>
+              ))}
+            </select>
+          </label>
+          {profile === 'generic' && (
+            <label className="stack">
+              Modèle déclaré (facultatif)
+              <input type="text" value={modelName} onChange={(event) => onModelNameChange(event.target.value)} />
+            </label>
+          )}
+        </div>
+      </div>
       <div className="grid-2">
         <div className="card">
           <div className="card-header">
-            <span className="card-title">Véhicule</span>
+            <span className="card-title">Identification lue</span>
           </div>
           <div className="card-body">
             <dl className="kv">

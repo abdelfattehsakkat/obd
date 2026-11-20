@@ -1,4 +1,4 @@
-import type { PidDefinition, SensorKey } from './types';
+import type { MonitorStatus, PidDefinition, ReadinessMonitor, SensorKey } from './types';
 
 const hex2 = (n: number) => n.toString(16).toUpperCase().padStart(2, '0');
 
@@ -396,12 +396,38 @@ export function decodeSupportedPids(basePid: number, data: number[]): number[] {
   return supported;
 }
 
-/** Décode le PID 0x01 : témoin moteur + nombre de codes défauts. */
-export function decodeMonitorStatus(data: number[]) {
-  return {
-    milOn: (data[0] & 0x80) !== 0,
-    dtcCount: data[0] & 0x7f,
-  };
+const COMMON_MONITORS = ['Ratés de combustion', 'Système carburant', 'Composants moteur'];
+const SPARK_MONITORS = [
+  'Catalyseur', 'Catalyseur chauffé', 'Évaporation (EVAP)', 'Air secondaire',
+  null, 'Sondes à oxygène', 'Chauffage des sondes à oxygène', 'EGR / distribution variable',
+];
+const COMPRESSION_MONITORS = [
+  'Catalyseur NMHC', 'Traitement des NOx', null, 'Pression de suralimentation',
+  null, 'Capteurs des gaz d’échappement', 'Filtre à particules', 'EGR / distribution variable',
+];
+
+function decodeReadiness(labels: Array<string | null>, supported: number, incomplete: number): ReadinessMonitor[] {
+  return labels.flatMap((label, index) => {
+    if (label === null) return [];
+    const mask = 1 << index;
+    const state = !(supported & mask) ? 'unsupported' : incomplete & mask ? 'incomplete' : 'ready';
+    return [{ label, state }];
+  });
+}
+
+/** Décode le PID 0x01 : témoin, défauts et préparation des moniteurs. */
+export function decodeMonitorStatus(data: number[]): MonitorStatus {
+  const [mil, common, supported, incomplete] = data;
+  if (mil === undefined) throw new RangeError('Statut des moniteurs vide.');
+
+  const status: MonitorStatus = { milOn: (mil & 0x80) !== 0, dtcCount: mil & 0x7f };
+  if (data.length >= 4) {
+    status.readiness = [
+      ...decodeReadiness(COMMON_MONITORS, common, common >> 4),
+      ...decodeReadiness(common & 0x08 ? COMPRESSION_MONITORS : SPARK_MONITORS, supported, incomplete),
+    ];
+  }
+  return status;
 }
 
 export function formatSensorValue(pid: PidDefinition, value: number): string {

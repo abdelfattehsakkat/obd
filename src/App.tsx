@@ -3,7 +3,7 @@ import { useObd } from './core/useObd';
 import { DashboardView } from './components/DashboardView';
 import { LiveDataView } from './components/LiveDataView';
 import { DtcView } from './components/DtcView';
-import { VehicleView } from './components/VehicleView';
+import { VehicleView, VEHICLE_PROFILES, type VehicleProfile } from './components/VehicleView';
 import { TerminalView } from './components/TerminalView';
 import type { TransportKind } from './transport/Transport';
 import type { ConnectionState } from './obd/types';
@@ -29,6 +29,8 @@ const STATE_META: Record<ConnectionState, { label: string; badge: string; pulse:
 export default function App() {
   const controller = useObd();
   const [view, setView] = useState<ViewId>('dashboard');
+  const [profile, setProfile] = useState<VehicleProfile>('generic');
+  const [modelName, setModelName] = useState('');
   const [transportKind, setTransportKind] = useState<TransportKind>('demo');
   const [bridgeUrl, setBridgeUrl] = useState('ws://127.0.0.1:8787');
 
@@ -124,6 +126,11 @@ export default function App() {
         <div className="nav-group-title">Session</div>
         <div style={{ padding: '4px 10px', fontSize: 12, color: 'var(--text-faint)', lineHeight: 1.9 }}>
           <div>
+            Profil : <b style={{ color: 'var(--text-dim)', overflowWrap: 'anywhere' }}>
+              {profile === 'generic' ? modelName.trim() || VEHICLE_PROFILES.generic : VEHICLE_PROFILES[profile]}
+            </b>
+          </div>
+          <div>
             Capteurs actifs : <b style={{ color: 'var(--text-dim)' }}>{activeSensors}</b>
           </div>
           <div>
@@ -143,14 +150,21 @@ export default function App() {
           </div>
         )}
 
-        {controller.state === 'disconnected' && !controller.error ? (
+        {view === 'vehicle' ? (
+          <VehicleView
+            controller={controller}
+            profile={profile}
+            onProfileChange={setProfile}
+            modelName={modelName}
+            onModelNameChange={setModelName}
+          />
+        ) : controller.state === 'disconnected' && !controller.error ? (
           <WelcomePanel bleAvailable={controller.bleAvailable} />
         ) : (
           <>
             {view === 'dashboard' && <DashboardView controller={controller} />}
             {view === 'live' && <LiveDataView controller={controller} />}
             {view === 'dtc' && <DtcView controller={controller} />}
-            {view === 'vehicle' && <VehicleView controller={controller} />}
             {view === 'terminal' && <TerminalView controller={controller} />}
           </>
         )}

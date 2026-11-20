@@ -1,5 +1,11 @@
 import type { ObdController } from '../core/useObd';
-import type { Dtc, DtcKind } from '../obd/types';
+import type { Dtc, DtcKind, ReadinessState } from '../obd/types';
+
+const READINESS_META: Record<ReadinessState, { label: string; badge: string }> = {
+  ready: { label: 'Prêt', badge: 'badge-ok' },
+  incomplete: { label: 'Non prêt', badge: 'badge-warn' },
+  unsupported: { label: 'Non supporté', badge: 'badge-neutral' },
+};
 
 const KIND_META: Record<DtcKind, { label: string; badge: string; hint: string }> = {
   stored: {
@@ -97,6 +103,28 @@ export function DtcView({ controller }: { controller: ObdController }) {
           </div>
         </div>
       </div>
+
+      <section className="card" aria-labelledby="readiness-title">
+        <div className="card-header">
+          <h2 className="card-title" id="readiness-title" style={{ margin: 0 }}>
+            Moniteurs antipollution
+          </h2>
+        </div>
+        <div className="card-body">
+          {monitorStatus?.readiness ? (
+            <dl className="kv" style={{ gridTemplateColumns: 'minmax(0, 190px) max-content' }}>
+              {monitorStatus.readiness.map(({ label, state }) => (
+                <div key={label} style={{ display: 'contents' }}>
+                  <dt>{label}</dt>
+                  <dd><span className={`badge ${READINESS_META[state].badge}`}>{READINESS_META[state].label}</span></dd>
+                </div>
+              ))}
+            </dl>
+          ) : (
+            <p className="muted" style={{ margin: 0 }}>État non disponible.</p>
+          )}
+        </div>
+      </section>
 
       {(['stored', 'pending', 'permanent'] as DtcKind[]).map((kind) => (
         <DtcGroup key={kind} kind={kind} codes={dtcs.filter((d) => d.kind === kind)} />

@@ -31,7 +31,8 @@
 - [ ] **Ajuster les seuils d'alerte** des jauges au véhicule réel (actuellement génériques)
 - [ ] **Mode 02 — données figées** : afficher le contexte enregistré au moment d'un code défaut.
       C'est l'information la plus utile au diagnostic, et elle est déjà autorisée par le garde-fou.
-- [ ] **Mode 06 — moniteurs embarqués** : état de préparation au contrôle technique
+- [x] **Mode 01, PID 01 — préparation des moniteurs antipollution** : prêt, non prêt ou non supporté
+- [ ] **Mode 06 — résultats des moniteurs embarqués** : valeurs et seuils des tests déjà exécutés
 - [ ] **Export CSV** de la session en cours (sans base de données)
 - [ ] **Sondes lambda** (PID `14`–`1B`, `24`–`2B`) — utiles pour le diagnostic de richesse
 - [ ] **Windows** : support des ports `COM` dans la passerelle (via `serialport`)

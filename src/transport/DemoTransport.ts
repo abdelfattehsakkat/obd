@@ -254,7 +254,7 @@ export class DemoTransport implements Transport {
       switch (pid) {
         case 0x01:
           // Témoin moteur allumé + 2 codes défauts confirmés.
-          return `${hex(0x80 | (STORED_DTCS.length / 2))}07E500`;
+          return `${hex(0x80 | (STORED_DTCS.length / 2))}07E504`;
         case 0x03:
           return '0200';
         case 0x04:

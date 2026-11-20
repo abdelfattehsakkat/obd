@@ -63,11 +63,19 @@ export interface Dtc {
   description: string;
 }
 
+export type ReadinessState = 'ready' | 'incomplete' | 'unsupported';
+
+export interface ReadinessMonitor {
+  label: string;
+  state: ReadinessState;
+}
+
 export interface MonitorStatus {
   /** Témoin moteur (Malfunction Indicator Lamp) allumé. */
   milOn: boolean;
   /** Nombre de codes défauts confirmés remontés par l'ECU. */
   dtcCount: number;
+  readiness?: ReadinessMonitor[];
 }
 
 export interface VehicleInfo {

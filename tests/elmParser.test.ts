@@ -7,8 +7,39 @@ import {
   parseServiceResponse,
   splitLines,
 } from '../src/obd/elmParser';
-import { decodeSupportedPids, PID_BY_KEY } from '../src/obd/pids';
+import { decodeMonitorStatus, decodeSupportedPids, PID_BY_KEY } from '../src/obd/pids';
 import { decodeDtcBytes, decodeDtcPayload } from '../src/obd/dtc';
+
+describe('moniteurs antipollution du mode 01', () => {
+  it('distingue les trois états et ignore un bit incomplet sans support', () => {
+    const status = decodeMonitorStatus([0x82, 0x21, 0x05, 0x06]);
+    expect(status).toMatchObject({ milOn: true, dtcCount: 2 });
+    expect(status.readiness).toEqual(expect.arrayContaining([
+      { label: 'Ratés de combustion', state: 'ready' },
+      { label: 'Système carburant', state: 'unsupported' },
+      { label: 'Catalyseur', state: 'ready' },
+      { label: 'Catalyseur chauffé', state: 'unsupported' },
+      { label: 'Évaporation (EVAP)', state: 'incomplete' },
+    ]));
+    expect(decodeMonitorStatus([0, 0x11, 0, 0]).readiness?.[0]?.state).toBe('incomplete');
+  });
+
+  it('applique le masque diesel et ne montre pas les bits réservés', () => {
+    const { readiness } = decodeMonitorStatus([0, 0x08, 0x49, 0x40]);
+    expect(readiness).toEqual(expect.arrayContaining([
+      { label: 'Catalyseur NMHC', state: 'ready' },
+      { label: 'Pression de suralimentation', state: 'ready' },
+      { label: 'Filtre à particules', state: 'incomplete' },
+    ]));
+    expect(readiness).toHaveLength(9);
+    expect(readiness?.some(({ label }) => label === 'Évaporation (EVAP)')).toBe(false);
+  });
+
+  it('conserve le voyant sans inventer les états si les octets manquent', () => {
+    expect(decodeMonitorStatus([0x81, 0x07, 0xe5])).toEqual({ milOn: true, dtcCount: 1 });
+    expect(() => decodeMonitorStatus([])).toThrow(RangeError);
+  });
+});
 
 describe('analyseur de réponses ELM327', () => {
   it('nettoie le prompt, les retours chariot et le bruit', () => {

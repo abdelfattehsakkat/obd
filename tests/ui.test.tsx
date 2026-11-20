@@ -30,6 +30,26 @@ describe('interface OBD Scope', () => {
     expect(screen.getByText('Déconnecté')).toBeTruthy();
   });
 
+  it('permet de déclarer un modèle et de choisir un profil sans connexion', () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: /Véhicule & adaptateur/i }));
+
+    const profile = screen.getByRole('combobox', { name: 'Profil d’affichage' }) as HTMLSelectElement;
+    expect(profile.value).toBe('generic');
+    fireEvent.change(screen.getByRole('textbox', { name: /Modèle déclaré/ }), {
+      target: { value: 'Ma Chevrolet' },
+    });
+    expect(screen.getByText('Ma Chevrolet')).toBeTruthy();
+    expect(screen.getByText('Identification lue')).toBeTruthy();
+
+    fireEvent.change(profile, { target: { value: 'sonic' } });
+    expect(screen.getByText('Chevrolet Sonic T300 1.2', { selector: 'b' })).toBeTruthy();
+    fireEvent.change(profile, { target: { value: 'aveo' } });
+    expect(screen.getByText('Chevrolet Aveo T250 1.2', { selector: 'b' })).toBeTruthy();
+    expect(screen.queryByRole('textbox', { name: /Modèle déclaré/ })).toBeNull();
+    expect(screen.getByText('Déconnecté')).toBeTruthy();
+  });
+
   it('se connecte au banc virtuel et affiche des données temps réel', async () => {
     render(<App />);
     await connectDemo();
@@ -52,6 +72,12 @@ describe('interface OBD Scope', () => {
     );
 
     expect(screen.getAllByText(/ISO 15765-4/).length).toBeGreaterThan(0);
+
+    fireEvent.click(screen.getByRole('button', { name: /Véhicule & adaptateur/i }));
+    expect(screen.getByText('SW-EDC17C42-0091')).toBeTruthy();
+    expect(screen.getByText('ECM-EngineControl')).toBeTruthy();
+    const profile = screen.getByRole('combobox', { name: 'Profil d’affichage' }) as HTMLSelectElement;
+    expect(profile.value).toBe('generic');
   }, 20000);
 
   it('liste les capteurs supportés et permet de basculer l’acquisition', async () => {
@@ -97,6 +123,11 @@ describe('interface OBD Scope', () => {
     );
 
     expect(screen.getByText(/Ratés de combustion — cylindre 1/)).toBeTruthy();
+    const monitors = within(screen.getByRole('region', { name: 'Moniteurs antipollution' }));
+    expect(monitors.getByText('Évaporation (EVAP)')).toBeTruthy();
+    expect(monitors.getByText('Non prêt')).toBeTruthy();
+    expect(monitors.getAllByText('Prêt').length).toBeGreaterThan(0);
+    expect(monitors.getAllByText('Non supporté').length).toBeGreaterThan(0);
   }, 20000);
 
   it('bloque visuellement une commande d’écriture dans la console', async () => {
