@@ -1,0 +1,65 @@
+Identification lue
+Numéro de série (VIN)
+Non communiqué
+Identifiant de calibration
+L004
+Nom du calculateur
+Non communiqué
+Protocole de diagnostic
+ISO 14230-4 (KWP FAST)
+Adaptateur
+Interface
+Bluetooth LE
+Périphérique
+OBDII
+Profil / liaison
+FFF0 (Vgate / clones ELM327 BLE)
+Firmware
+ELM327 v2.1
+Tension mesurée
+12.9 V
+Capteurs déclarés par le calculateur (12)
+01 04 · Charge moteur
+01 05 · Temp. liquide refroid.
+01 06 · Trim court terme B1
+01 07 · Trim long terme B1
+01 0B · Pression collecteur
+01 0C · Régime moteur
+01 0D · Vitesse véhicule
+01 0E · Avance allumage
+01 0F · Temp. air admission
+01 11 · Position papillon
+01 21 · Distance témoin allumé
+01 03 · Statut système carburant
+--------------Analyse des codes défauts
+Témoin moteur éteint
+Lancer l’analyse
+Cet outil ne peut pas effacer les codes défauts : le mode OBD 04 est bloqué par le garde-fou lecture seule. Effacer un code sans avoir réparé la panne fait perdre les données figées (freeze frame) qui servent au diagnostic.
+Moniteurs antipollution
+Ratés de combustion
+Prêt
+Système carburant
+Prêt
+Composants moteur
+Prêt
+Catalyseur
+Non prêt
+Catalyseur chauffé
+Non supporté
+Évaporation (EVAP)
+Non supporté
+Air secondaire
+Non supporté
+Sondes à oxygène
+Prêt
+Chauffage des sondes à oxygène
+Non supporté
+EGR / distribution variable
+Non prêt
+
+----------
+signification de :
+	01 03	
+Statut système carburant
+État de la boucle de régulation de richesse (ouverte / fermée).
+Carburant	Boucle fermée — sonde lambda active

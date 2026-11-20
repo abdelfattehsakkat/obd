@@ -1,0 +1,39 @@
+generique:
+Identification lue
+Numéro de série (VIN)
+KL1JJ5C37JB034177
+Identifiant de calibration
+1265711455494628554946151262
+Nom du calculateur
+ECM-Enginl
+Protocole de diagnostic
+ISO 15765-4 (CAN 11/500)
+Adaptateur
+Interface
+Bluetooth LE
+Périphérique
+OBDII
+Profil / liaison
+FFF0 (Vgate / clones ELM327 BLE)
+Firmware
+ELM327 v2.1
+Tension mesurée
+12.8 V
+Capteurs déclarés par le calculateur (22)
+01 04 · Charge moteur
+01 05 · Temp. liquide refroid.
+01 06 · Trim court terme B1
+01 07 · Trim long terme B1
+01 0B · Pression collecteur
+01 0C · Régime moteur
+01 0D · Vitesse véhicule
+01 0E · Avance allumage
+01 0F · Temp. air admission
+01 10 · Débit d’air (MAF)
+01 11 · Position papillon
+01 1F · Temps depuis démarrage
+01 21 · Distance témoin allumé
+01 2F · Niveau carburant
+01 31 · Distance depuis effacement
+01 33 · Pression atmosphérique
+01 42 · Tension calculateur
